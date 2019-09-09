@@ -7,3 +7,4 @@ spring:
       profile: dev
       uri: http://localhost:8888/
 
+foo: version1
