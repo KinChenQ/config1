@@ -14,7 +14,19 @@ spring:
 #      name: cq
 #      password: 123456
 
-
+cloud:
+  config:
+#      name: servicehi
+      label: master
+      profile: dev
+      uri: http://localhost:8888/
+      request-read-timeout: 5000
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 5
+        max-interval: 2000
+        multiplier: 1.2
 #路由映射（反向代理）
 zuul:
   #忽略该服务，不代理
