@@ -14,6 +14,7 @@ spring:
 #      name: cq
 #      password: 123456
 
+
 #路由映射（反向代理）
 zuul:
   #忽略该服务，不代理
@@ -67,6 +68,15 @@ zuul:
     post:
       disable: false
 
+bus:
+     enabled: true
+     trace:
+       enabled: true
+ rabbitmq:                                #本地环境不需要配置mq
+   host: localhost
+   port: 5672
+   username: guest
+   password: guest
 
 hystrix:
   command:
