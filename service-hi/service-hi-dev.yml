@@ -1,1 +1,53 @@
-cc: ayiya1
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8090/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+
+feign-client:
+  ribbon:     #RetryRule   RandomRule
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+
+cc: ayiya
+
+spring:
+  application:
+    name: service-hi
+
+
+  cloud:
+    config:
+#      name: servicehi
+      label: master
+      profile: dev
+      uri: http://localhost:8888/
+      request-read-timeout: 5000
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 5
+        max-interval: 2000
+        multiplier: 1.2
+#    bus:
+#      enabled: true
+#      trace:
+#        enabled: true
+#  rabbitmq:                                #本地环境不需要配置mq
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: "*"
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
