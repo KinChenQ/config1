@@ -1,0 +1,119 @@
+server:
+  port: 8097
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8090/eureka/
+
+spring:
+  application:
+    name: service-zuul
+#  security:
+#    user:
+#      name: cq
+#      password: 123456
+
+#路由映射（反向代理）
+zuul:
+  #忽略该服务，不代理
+  #  ignored-services: service-ribbon,service-feign
+  ignored-services: "*"
+
+  ignored-patterns: /**/hi
+  #  统一公共前缀
+  prefix: /area1
+  sensitive-headers: Cookie,Set-Cookie,Authorization
+  routes:
+    api-a:
+#   /service1/*只能接一层路径
+      path: /service1/**
+      serviceId: service-hi
+#      无负载均衡和断路器能力
+#      url: http://localhost:8093
+#    api-b:
+#      path: /service2/**
+#      serviceId: service-yeah
+##      stripPrefix: false
+
+    service-hi: /service1/**
+    service-yeah: /service2/**
+  ribbon:
+    eager-load:
+      enabled: true
+
+
+  host:
+    max-total-connections: 200
+    max-per-route-connections: 20
+#    url代理下的超时
+#    connect-timeout-millis: 1000
+#    socket-timeout-millis: 3000
+
+#  zuul重试一次
+  retryable: true
+#  隔离机制改为线程池
+  ribbon-isolation-strategy: thread
+#  每个路由使用独立的线程池
+  thread-pool:
+    use-separate-thread-pools: true
+    thread-pool-key-prefix: zuult
+
+
+  MyPreFilter:
+    pre:
+      disable: false
+  MyPostFilter:
+    post:
+      disable: false
+
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+
+ribbon:
+#  NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
+#  listOfServers: http://localhost:8091,http://localhost:8092
+##    若ConnectTimeOut或 ReadTimeOut小于timeoutInMilliseconds时，会重试一次，反之不会，直接抛出
+  ConnectTimeOut: 3000
+#
+##    serviceId代理下的超时
+  ReadTimeOut: 3000
+  SocketTimeout: 1000
+#
+##    对当前实例的重试次数
+#  MaxAutoRetries: 3
+##    切换实例的重试次数
+#  MaxAutoRetriesNextServer: 1
+#
+#
+  MaxTotalHttpConnections: 500
+  MaxConnectionPerHost: 100
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
+
+turbine:
+#  监控服务
+  app-config: service-hi,service-yeah
+#  聚合服务的监控
+  aggregator:
+    clusterConfig: default
+  clusterNameExpression: new String("default")
+  combine-host: true
+  instanceUrlSuffix:
+    default: /turbine.stream
+
+
